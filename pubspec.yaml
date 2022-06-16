@@ -1,0 +1,19 @@
+name: analisador_lexico
+description: Analisador Léxixo
+
+publish_to: "none"
+
+version: 1.0.0
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+
+dev_dependencies:
+  analyzer: 4.1.0
+  equatable: 2.0.3
+  dartz: 0.10.1
+
+scripts:
+  run: dart src/main.dart
