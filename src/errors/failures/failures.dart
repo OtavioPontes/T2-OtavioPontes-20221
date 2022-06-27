@@ -11,3 +11,21 @@ class InternalFailure extends IFailure {
           message: message,
         );
 }
+
+class InvalidCharFailure extends IFailure {
+  const InvalidCharFailure({
+    String message = '[Erro Léxico] - Caractére inválido',
+    required int row,
+    required int column,
+  }) : super(
+          column: column,
+          row: row,
+          message: message,
+        );
+}
+
+class InvalidTransitionFailure extends IFailure {
+  const InvalidTransitionFailure({
+    String message = '[Erro Léxico] - Transição inválida',
+  }) : super(message: message);
+}

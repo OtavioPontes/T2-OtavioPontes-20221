@@ -1,34 +1,46 @@
 import '../domain/entities/token.dart';
 import '../domain/usecases/i_usecase.dart';
 import '../domain/usecases/scanner/get_codigo_fonte_from_file_usecase.dart';
+import 'dfa_store.dart';
 import 'token_store.dart';
 
 class ScannerStore {
   final GetCodigoFonteFromFileUsecase getCodigoFonteFromFileUsecase;
   final TokenStore tokenStore;
+  final DFAStore dfaStore;
 
   ScannerStore({
+    required this.dfaStore,
     required this.tokenStore,
     required this.getCodigoFonteFromFileUsecase,
   }) {
     pipeline();
   }
-  int column = 0;
-  int row = 0;
 
   late String codigoFonte;
-  String tokenLido = '';
 
   void pipeline() async {
     codigoFonte = getCodigoFonte();
   }
-
-  Future<Token?> scanner({required int row, required int column}) async {}
 
   String getCodigoFonte() {
     return handleUseCaseSync(
       getCodigoFonteFromFileUsecase,
       NoParams(),
     );
+  }
+
+  Future<Token?> scanner({required String codigoFonte}) async {
+    final int codigoFonteLength = codigoFonte.length;
+
+    while (tokenStore.currentPosition < codigoFonteLength - 1) {
+      dfaStore.pipeline(
+        char: codigoFonte[tokenStore.currentPosition],
+        row: tokenStore.row,
+        column: tokenStore.column,
+      );
+
+      tokenStore.currentPosition++;
+    }
   }
 }

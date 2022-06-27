@@ -6,7 +6,6 @@ import 'package:dartz/dartz.dart';
 import '../../../data/models/token_model.dart';
 import '../../../errors/failures/failures.dart';
 import '../../../errors/failures/i_failure.dart';
-import '../../../main.dart';
 import '../../entities/token.dart';
 import '../i_usecase.dart';
 
