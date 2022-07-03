@@ -27,11 +27,12 @@ class DFAStore {
     17,
     18,
     19,
-    20
+    20,
+    21
   ];
 
   Map<int, List<int>> transitionTable = {
-    0: [0, 1, 7, 9, 10, 12, 13, 16, 17, 18, 19, 20], // Estado Inicial
+    0: [0, 1, 7, 9, 10, 12, 13, 16, 17, 18, 19, 21], // Estado Inicial
     1: [1, 2, 4],
     2: [3, 20],
     3: [3, 4],
@@ -51,16 +52,57 @@ class DFAStore {
     17: [],
     18: [],
     19: [],
-    20: [], // Estado de Erro
+    20: [],
+    21: [] // Estado de Erro
   };
 
-  void transitState({
+  Token? pipeline({
+    required String char,
+    required int row,
+    required int column,
+  }) {
+    isCharacterValid(
+      char: char,
+      column: column,
+      row: row,
+    );
+    return transitState(
+      char: char,
+      column: column,
+      row: row,
+    );
+  }
+
+  void isCharacterValid({
+    required String char,
+    required int row,
+    required int column,
+  }) {
+    if (!tokenStore.alfabeto.containsCharacter(char.toLowerCase()) &&
+        !char.contains(RegExp(r'\s+')))
+      tokenStore.addTokenToErrorList(
+        failure: InvalidCharFailure(
+          row: row,
+          column: column,
+          char: char,
+        ),
+      );
+  }
+
+  Token? transitState({
     required String char,
     required int row,
     required int column,
   }) {
     try {
+      tokenStore.column++;
+      if (char.contains(RegExp(r'\n'))) {
+        tokenStore.row++;
+        tokenStore.column = 1;
+      }
+
       tokenStore.lexemaLido += char;
+
       switch (currentState) {
         case 0:
           {
@@ -84,6 +126,8 @@ class DFAStore {
               currentState = 18;
             else if (char == ',')
               currentState = 19;
+            else if (['+', '-', '*', '/'].contains(char))
+              currentState = 21;
             else
               throw InvalidTransitionFailure();
           }
@@ -209,53 +253,190 @@ class DFAStore {
           throw InvalidTransitionFailure();
         case 20:
           throw InvalidTransitionFailure();
+        case 21:
+          throw InvalidTransitionFailure();
       }
-    } on InvalidTransitionFailure catch (e) {
+    } on InvalidTransitionFailure {
       if (finalStates.contains(currentState)) {
         tokenStore.lexemaLido = tokenStore.lexemaLido
             .substring(0, tokenStore.lexemaLido.length - 1);
-        print(tokenStore.lexemaLido.trim());
+        tokenStore.lexemaLido = tokenStore.lexemaLido.trim();
+
+        Token? token = tokenStore.tabelaSimbolos[tokenStore.lexemaLido];
+        if (tokenStore.hasError) {
+          token = Token(
+            classe: EnumTipoToken.ERRO.toFormattedString,
+            lexema: tokenStore.lexemaLido,
+          );
+
+          tokenStore.addTokenToErrorList(
+            failure: InvalidWordFailure(
+              column: column,
+              row: row - tokenStore.lexemaLido.length,
+              word: tokenStore.lexemaLido,
+            ),
+          );
+
+          tokenStore.hasError = false;
+        } else {
+          switch (currentState) {
+            case 1:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.Num.toFormattedString,
+                  tipo: 'inteiro',
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 3:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.Num.toFormattedString,
+                  tipo: 'real',
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 6:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.Num.toFormattedString,
+                  tipo: 'real',
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 8:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.Lit.toFormattedString,
+                  tipo: 'literal',
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 9:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.id.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 11:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.Comentario.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 14:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.OPR.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 15:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.RCB.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 16:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.AB_P.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 17:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.FC_P.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 18:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.PT_V.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 19:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.Vir.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+
+            case 21:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.OPM.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+          }
+        }
         currentState = 0;
         tokenStore.currentPosition = tokenStore.currentPosition - 1;
         tokenStore.lexemaLido = '';
+        return token;
       } else {
-        tokenStore.addTokenToErrorList(
-          token: Token(
-            classe: EnumTipoToken.ERRO.toFormattedString,
-            lexema: char,
-          ),
-        );
+        tokenStore.hasError = true;
       }
     }
-  }
-
-  void pipeline({
-    required String char,
-    required int row,
-    required int column,
-  }) {
-    isCharacterValid(
-      char: char,
-      column: column,
-      row: row,
-    );
-    transitState(
-      char: char,
-      column: column,
-      row: row,
-    );
-  }
-
-  void isCharacterValid({
-    required String char,
-    required int row,
-    required int column,
-  }) {
-    tokenStore.addTokenToErrorList(
-      token: Token(
-        classe: EnumTipoToken.ERRO.toFormattedString,
-        lexema: char,
-      ),
-    );
+    return null;
   }
 }

@@ -1,7 +1,7 @@
 inicio
     varinicio
-        literal A, B;
-        inteiro B;
+        literal @A, B;
+        inteiro _B;
         inteiro D;
         real C ;
     varfim;
@@ -10,6 +10,7 @@ inicio
     escreva "Digite A:";
     leia A;
     se(B>2)
+    {teste1234 124124 1}
     entao
         se(B<=4)
         entao

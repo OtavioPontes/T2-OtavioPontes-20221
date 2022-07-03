@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 
 import '../data/models/alfabeto_model.dart';
 import '../domain/entities/token.dart';
 import '../domain/usecases/i_usecase.dart';
 import '../domain/usecases/tokens/get_tokens_from_palavras_reservadas_usecase.dart';
+import '../errors/failures/i_failure.dart';
 
 class TokenStore {
   final GetTokensFromPalavrasReservadasUsecase
@@ -22,10 +22,11 @@ class TokenStore {
 
   late AlfabetoModel alfabeto;
 
-  List<Token> erros = [];
+  List<IFailure> erros = [];
 
   Map<String, Token> tabelaSimbolos = {};
 
+  bool hasError = false;
   String lexemaLido = '';
 
   void pipeline() async {
@@ -59,8 +60,8 @@ class TokenStore {
     );
   }
 
-  void addTokenToErrorList({required Token token}) {
-    erros.add(token);
+  void addTokenToErrorList({required IFailure failure}) {
+    erros.add(failure);
   }
 
   void updateToken({required Token token}) {

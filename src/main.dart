@@ -1,5 +1,6 @@
 import 'domain/usecases/scanner/get_codigo_fonte_from_file_usecase.dart';
 import 'domain/usecases/tokens/get_tokens_from_palavras_reservadas_usecase.dart';
+import 'errors/failures/failures.dart';
 import 'stores/dfa_store.dart';
 import 'stores/scanner_store.dart';
 import 'stores/token_store.dart';
@@ -17,4 +18,21 @@ void main() async {
     getCodigoFonteFromFileUsecase: GetCodigoFonteFromFileUsecase(),
   );
   await scannerStore.scanner(codigoFonte: scannerStore.codigoFonte);
+  print('Tokens:');
+  tokenStore.tabelaSimbolos.values.forEach(print);
+  print('\nErros:');
+  tokenStore.erros.forEach(
+    (element) => {
+      if (element is InvalidCharFailure)
+        {
+          print(
+              '[Erro Léxico] - (${element.char}) Caractére Inválido na linha ${element.row} e coluna ${element.column}')
+        }
+      else if (element is InvalidWordFailure)
+        {
+          print(
+              '[Erro Léxico] - (${element.char}) Palavra Rejeitada na linha ${element.row} e coluna ${element.column}')
+        }
+    },
+  );
 }
