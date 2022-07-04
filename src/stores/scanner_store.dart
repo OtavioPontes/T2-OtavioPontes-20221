@@ -1,4 +1,5 @@
 import '../domain/entities/token.dart';
+import '../domain/enums/enum_tipo_token.dart';
 import '../domain/usecases/i_usecase.dart';
 import '../domain/usecases/scanner/get_codigo_fonte_from_file_usecase.dart';
 import '../errors/failures/failures.dart';
@@ -38,30 +39,39 @@ class ScannerStore {
   }) async {
     if (rowPar != null) tokenStore.row = rowPar;
     if (columnPar != null) tokenStore.column = columnPar;
-    while (tokenStore.row < codigoFonte.length - 1 ||
-        tokenStore.column < codigoFonte[codigoFonte.length - 1].length - 1) {
+
+    while (codigoFonte[tokenStore.row][tokenStore.column] != '\$') {
       final Token? token = dfaStore.pipeline(
         char: codigoFonte[tokenStore.row][tokenStore.column],
         row: tokenStore.row,
         column: tokenStore.column,
       );
-
+      //if (token != null) return token;
       if (tokenStore.column == codigoFonte[tokenStore.row].length - 1) {
         tokenStore.row++;
         tokenStore.column = 0;
       } else
         tokenStore.column++;
     }
-    // if (token != null) return token;
+    tokenStore.addTokenToTable(
+      token: Token(
+        classe: EnumTipoToken.EOF.toFormattedString,
+        lexema: '\$',
+      ),
+    );
 
-    // if (tokenStore.lexemaLido.isNotEmpty) {
-    //   tokenStore.addTokenToErrorList(
-    //     failure: InvalidWordFailure(
-    //       row: tokenStore.row,
-    //       column: tokenStore.column,
-    //       word: tokenStore.lexemaLido,
-    //     ),
-    //   );
-    // }
+    if (tokenStore.lexemaLido.trim().isNotEmpty) {
+      tokenStore.addTokenToErrorList(
+        failure: InvalidWordFailure(
+          row: tokenStore.row,
+          column: tokenStore.column,
+          word: tokenStore.lexemaLido.trim(),
+        ),
+      );
+    }
+    return Token(
+      classe: EnumTipoToken.EOF.toFormattedString,
+      lexema: '\$',
+    );
   }
 }

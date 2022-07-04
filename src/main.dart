@@ -17,9 +17,14 @@ void main() async {
     tokenStore: tokenStore,
     getCodigoFonteFromFileUsecase: GetCodigoFonteFromFileUsecase(),
   );
-  await scannerStore.scanner(codigoFonte: scannerStore.codigoFonte);
-  print('Tokens:');
-  tokenStore.tabelaSimbolos.values.forEach(print);
+  print(
+    await scannerStore.scanner(
+      codigoFonte: scannerStore.codigoFonte,
+      rowPar: null,
+      columnPar: null,
+    ),
+  );
+
   print('\nErros:');
   tokenStore.erros.forEach(
     (element) => {

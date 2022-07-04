@@ -31,31 +31,6 @@ class DFAStore {
     21
   ];
 
-  Map<int, List<int>> transitionTable = {
-    0: [0, 1, 7, 9, 10, 12, 13, 16, 17, 18, 19, 21], // Estado Inicial
-    1: [1, 2, 4],
-    2: [3, 20],
-    3: [3, 4],
-    4: [5, 6, 20],
-    5: [6, 20],
-    6: [6],
-    7: [7, 8, 20],
-    8: [],
-    9: [9],
-    10: [10, 11, 20],
-    11: [],
-    12: [],
-    13: [14, 15],
-    14: [],
-    15: [],
-    16: [],
-    17: [],
-    18: [],
-    19: [],
-    20: [],
-    21: [] // Estado de Erro
-  };
-
   Token? pipeline({
     required String char,
     required int row,
@@ -110,6 +85,8 @@ class DFAStore {
               currentState = 9;
             else if (char == '{')
               currentState = 10;
+            else if (char == '\$')
+              currentState = 12;
             else if (['>', '<', '='].contains(char))
               currentState = 13;
             else if (char == '(')
@@ -222,7 +199,6 @@ class DFAStore {
           throw InvalidTransitionFailure();
         case 12:
           throw InvalidTransitionFailure();
-
         case 13:
           {
             if (char == '-')
@@ -338,6 +314,17 @@ class DFAStore {
                 token = Token(
                   lexema: tokenStore.lexemaLido,
                   classe: EnumTipoToken.Comentario.toFormattedString,
+                );
+                tokenStore.tabelaSimbolos.addAll(
+                  {tokenStore.lexemaLido: token},
+                );
+              }
+              break;
+            case 12:
+              if (token == null) {
+                token = Token(
+                  lexema: tokenStore.lexemaLido,
+                  classe: EnumTipoToken.EOF.toFormattedString,
                 );
                 tokenStore.tabelaSimbolos.addAll(
                   {tokenStore.lexemaLido: token},

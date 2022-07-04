@@ -12,6 +12,7 @@ class GetCodigoFonteFromFileUsecase
   Either<IFailure, List<String>> call(NoParams params) {
     try {
       final List<String> codigoFonte = File('./fonte.alg').readAsLinesSync();
+      codigoFonte.last += ' \$';
       return Right(codigoFonte);
     } catch (_) {
       return Left(
