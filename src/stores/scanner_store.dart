@@ -18,41 +18,50 @@ class ScannerStore {
     pipeline();
   }
 
-  late String codigoFonte;
+  late List<String> codigoFonte;
 
   void pipeline() async {
     codigoFonte = getCodigoFonte();
   }
 
-  String getCodigoFonte() {
+  List<String> getCodigoFonte() {
     return handleUseCaseSync(
       getCodigoFonteFromFileUsecase,
       NoParams(),
     );
   }
 
-  Future<Token?> scanner({required String codigoFonte}) async {
-    final int codigoFonteLength = codigoFonte.length;
-
-    while (tokenStore.currentPosition < codigoFonteLength) {
+  Future<Token?> scanner({
+    required List<String> codigoFonte,
+    int? rowPar,
+    int? columnPar,
+  }) async {
+    if (rowPar != null) tokenStore.row = rowPar;
+    if (columnPar != null) tokenStore.column = columnPar;
+    while (tokenStore.row < codigoFonte.length - 1 ||
+        tokenStore.column < codigoFonte[codigoFonte.length - 1].length - 1) {
       final Token? token = dfaStore.pipeline(
-        char: codigoFonte[tokenStore.currentPosition],
+        char: codigoFonte[tokenStore.row][tokenStore.column],
         row: tokenStore.row,
         column: tokenStore.column,
       );
-      tokenStore.currentPosition++;
 
-      // if (token != null) return token;
-      continue;
+      if (tokenStore.column == codigoFonte[tokenStore.row].length - 1) {
+        tokenStore.row++;
+        tokenStore.column = 0;
+      } else
+        tokenStore.column++;
     }
-    if (tokenStore.lexemaLido.isNotEmpty) {
-      tokenStore.addTokenToErrorList(
-        failure: InvalidWordFailure(
-          row: tokenStore.row,
-          column: tokenStore.column,
-          word: tokenStore.lexemaLido,
-        ),
-      );
-    }
+    // if (token != null) return token;
+
+    // if (tokenStore.lexemaLido.isNotEmpty) {
+    //   tokenStore.addTokenToErrorList(
+    //     failure: InvalidWordFailure(
+    //       row: tokenStore.row,
+    //       column: tokenStore.column,
+    //       word: tokenStore.lexemaLido,
+    //     ),
+    //   );
+    // }
   }
 }

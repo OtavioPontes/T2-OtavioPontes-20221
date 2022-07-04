@@ -16,9 +16,8 @@ class TokenStore {
     pipeline();
   }
 
-  int column = 1;
-  int row = 1;
-  int currentPosition = 0;
+  int column = 0;
+  int row = 0;
 
   late AlfabetoModel alfabeto;
 

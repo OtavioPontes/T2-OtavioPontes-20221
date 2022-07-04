@@ -26,12 +26,12 @@ void main() async {
       if (element is InvalidCharFailure)
         {
           print(
-              '[Erro Léxico] - (${element.char}) Caractére Inválido na linha ${element.row} e coluna ${element.column}')
+              '[Erro Léxico] - (${element.char}) Caractére Inválido na linha ${element.row! + 1} e coluna ${element.column! + 1}')
         }
       else if (element is InvalidWordFailure)
         {
           print(
-              '[Erro Léxico] - (${element.char}) Palavra Rejeitada na linha ${element.row} e coluna ${element.column}')
+              '[Erro Léxico] - (${element.char}) Palavra Rejeitada na linha ${element.row! + 1} e coluna ${element.column! + 1}')
         }
     },
   );

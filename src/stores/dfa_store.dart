@@ -95,12 +95,6 @@ class DFAStore {
     required int column,
   }) {
     try {
-      tokenStore.column++;
-      if (char.contains(RegExp(r'\n'))) {
-        tokenStore.row++;
-        tokenStore.column = 1;
-      }
-
       tokenStore.lexemaLido += char;
 
       switch (currentState) {
@@ -271,8 +265,8 @@ class DFAStore {
 
           tokenStore.addTokenToErrorList(
             failure: InvalidWordFailure(
-              column: column,
-              row: row - tokenStore.lexemaLido.length,
+              column: column - tokenStore.lexemaLido.length,
+              row: row,
               word: tokenStore.lexemaLido,
             ),
           );
@@ -430,7 +424,7 @@ class DFAStore {
           }
         }
         currentState = 0;
-        tokenStore.currentPosition = tokenStore.currentPosition - 1;
+        tokenStore.column = tokenStore.column - 1;
         tokenStore.lexemaLido = '';
         return token;
       } else {
