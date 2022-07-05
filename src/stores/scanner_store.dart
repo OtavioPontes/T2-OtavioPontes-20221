@@ -46,13 +46,15 @@ class ScannerStore {
         row: tokenStore.row,
         column: tokenStore.column,
       );
-      //if (token != null) return token;
+
       if (tokenStore.column == codigoFonte[tokenStore.row].length - 1) {
         tokenStore.row++;
         tokenStore.column = 0;
       } else
         tokenStore.column++;
+      if (token != null) return token;
     }
+
     tokenStore.addTokenToTable(
       token: Token(
         classe: EnumTipoToken.EOF.toFormattedString,
@@ -68,7 +70,15 @@ class ScannerStore {
           word: tokenStore.lexemaLido.trim(),
         ),
       );
+      final Token token = Token(
+        classe: EnumTipoToken.ERRO.toFormattedString,
+        lexema: tokenStore.lexemaLido.trim(),
+      );
+      tokenStore.lexemaLido = '';
+      return token;
     }
+    tokenStore.isOver = true;
+
     return Token(
       classe: EnumTipoToken.EOF.toFormattedString,
       lexema: '\$',

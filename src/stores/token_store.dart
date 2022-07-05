@@ -21,6 +21,8 @@ class TokenStore {
 
   late AlfabetoModel alfabeto;
 
+  bool isOver = false;
+
   List<IFailure> erros = [];
 
   Map<String, Token> tabelaSimbolos = {};

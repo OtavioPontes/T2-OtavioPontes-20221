@@ -1,4 +1,3 @@
-import '../../domain/entities/token.dart';
 import 'i_failure.dart';
 
 class InternalFailure extends IFailure {

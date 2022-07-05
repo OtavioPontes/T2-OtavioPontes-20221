@@ -1,4 +1,4 @@
-inicio
+inicio 
     varinicio
         literal @A, _B;
         inteiro B;

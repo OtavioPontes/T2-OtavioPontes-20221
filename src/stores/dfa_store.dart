@@ -411,7 +411,8 @@ class DFAStore {
           }
         }
         currentState = 0;
-        tokenStore.column = tokenStore.column - 1;
+        if (tokenStore.column > 0) tokenStore.column = tokenStore.column - 1;
+
         tokenStore.lexemaLido = '';
         return token;
       } else {

@@ -11,7 +11,8 @@ class GetCodigoFonteFromFileUsecase
   @override
   Either<IFailure, List<String>> call(NoParams params) {
     try {
-      final List<String> codigoFonte = File('./fonte.alg').readAsLinesSync();
+      List<String> codigoFonte = File('./fonte.alg').readAsLinesSync();
+      codigoFonte = codigoFonte.map((e) => e += '\n').toList();
       codigoFonte.last += ' \$';
       return Right(codigoFonte);
     } catch (_) {
