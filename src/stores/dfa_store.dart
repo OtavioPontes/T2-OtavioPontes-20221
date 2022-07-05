@@ -28,7 +28,8 @@ class DFAStore {
     18,
     19,
     20,
-    21
+    21,
+    22
   ];
 
   Token? pipeline({
@@ -87,8 +88,10 @@ class DFAStore {
               currentState = 10;
             else if (char == '\$')
               currentState = 12;
-            else if (['>', '<', '='].contains(char))
+            else if (['>', '<'].contains(char))
               currentState = 13;
+            else if (char == '=')
+              currentState = 14;
             else if (char == '(')
               currentState = 16;
             else if (char == ')')
@@ -203,14 +206,15 @@ class DFAStore {
           {
             if (char == '-')
               currentState = 15;
-            else if (['>', '<'].contains(char))
-              currentState = 14;
+            else if (['>', '<', '='].contains(char))
+              currentState = 22;
             else
               throw InvalidTransitionFailure();
           }
           break;
         case 14:
           throw InvalidTransitionFailure();
+
         case 15:
           throw InvalidTransitionFailure();
         case 16:
@@ -224,6 +228,8 @@ class DFAStore {
         case 20:
           throw InvalidTransitionFailure();
         case 21:
+          throw InvalidTransitionFailure();
+        case 22:
           throw InvalidTransitionFailure();
       }
     } on InvalidTransitionFailure {
@@ -251,52 +257,36 @@ class DFAStore {
         } else {
           switch (currentState) {
             case 1:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.Num.toFormattedString,
-                  tipo: 'inteiro',
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.Num.toFormattedString,
+                tipo: 'inteiro',
+              );
+
               break;
             case 3:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.Num.toFormattedString,
-                  tipo: 'real',
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.Num.toFormattedString,
+                tipo: 'real',
+              );
+
               break;
             case 6:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.Num.toFormattedString,
-                  tipo: 'real',
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.Num.toFormattedString,
+                tipo: 'real',
+              );
+
               break;
             case 8:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.Lit.toFormattedString,
-                  tipo: 'literal',
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.Lit.toFormattedString,
+                tipo: 'literal',
+              );
+
               break;
             case 9:
               if (token == null) {
@@ -310,104 +300,83 @@ class DFAStore {
               }
               break;
             case 11:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.Comentario.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.Comentario.toFormattedString,
+              );
+
               break;
             case 12:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.EOF.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.EOF.toFormattedString,
+              );
+
+              break;
+            case 13:
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.OPR.toFormattedString,
+              );
+
               break;
             case 14:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.OPR.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.OPR.toFormattedString,
+              );
+
               break;
             case 15:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.RCB.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.RCB.toFormattedString,
+              );
+
               break;
             case 16:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.AB_P.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.AB_P.toFormattedString,
+              );
+
               break;
             case 17:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.FC_P.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.FC_P.toFormattedString,
+              );
+
               break;
             case 18:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.PT_V.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.PT_V.toFormattedString,
+              );
+
               break;
             case 19:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.Vir.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.Vir.toFormattedString,
+              );
+
               break;
 
             case 21:
-              if (token == null) {
-                token = Token(
-                  lexema: tokenStore.lexemaLido,
-                  classe: EnumTipoToken.OPM.toFormattedString,
-                );
-                tokenStore.tabelaSimbolos.addAll(
-                  {tokenStore.lexemaLido: token},
-                );
-              }
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.OPM.toFormattedString,
+              );
+
+              break;
+            case 22:
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.OPR.toFormattedString,
+              );
+
+              break;
           }
         }
         currentState = 0;

@@ -12,7 +12,7 @@ inicio
     se(B>2)
     {teste1234 124124 1}
     entao
-        se(B<=4)
+        se(B>=4)
         entao
             escreva "B esta entre 2 e 4";
         fimse

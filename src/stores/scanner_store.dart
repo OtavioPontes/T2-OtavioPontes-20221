@@ -55,13 +55,6 @@ class ScannerStore {
       if (token != null) return token;
     }
 
-    tokenStore.addTokenToTable(
-      token: Token(
-        classe: EnumTipoToken.EOF.toFormattedString,
-        lexema: '\$',
-      ),
-    );
-
     if (tokenStore.lexemaLido.trim().isNotEmpty) {
       tokenStore.addTokenToErrorList(
         failure: InvalidWordFailure(
