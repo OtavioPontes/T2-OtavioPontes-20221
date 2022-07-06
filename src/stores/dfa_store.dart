@@ -29,7 +29,8 @@ class DFAStore {
     19,
     20,
     21,
-    22
+    22,
+    24
   ];
 
   Token? pipeline({
@@ -110,7 +111,7 @@ class DFAStore {
           {
             if (tokenStore.alfabeto.digitos.contains(char))
               currentState = 1;
-            else if (char == '^')
+            else if (['e', 'E'].contains(char))
               currentState = 4;
             else if (char == '.')
               currentState = 2;
@@ -130,8 +131,8 @@ class DFAStore {
           {
             if (tokenStore.alfabeto.digitos.contains(char))
               currentState = 3;
-            else if (char == '^')
-              currentState = 4;
+            else if (['e', 'E'].contains(char))
+              currentState = 25;
             else
               throw InvalidTransitionFailure();
           }
@@ -140,8 +141,10 @@ class DFAStore {
           {
             if (tokenStore.alfabeto.digitos.contains(char))
               currentState = 6;
-            else if (['+', '-'].contains(char))
+            else if (char == '+')
               currentState = 5;
+            else if (char == '-')
+              currentState = 23;
             else
               throw InvalidTransitionFailure();
           }
@@ -231,6 +234,32 @@ class DFAStore {
           throw InvalidTransitionFailure();
         case 22:
           throw InvalidTransitionFailure();
+        case 23:
+          {
+            if (tokenStore.alfabeto.digitos.contains(char))
+              currentState = 24;
+            else
+              throw InvalidTransitionFailure();
+          }
+          break;
+        case 24:
+          {
+            if (tokenStore.alfabeto.digitos.contains(char))
+              currentState = 24;
+            else
+              throw InvalidTransitionFailure();
+          }
+          break;
+        case 25:
+          {
+            if (['+', '-'].contains(char))
+              currentState = 23;
+            else if (tokenStore.alfabeto.digitos.contains(char))
+              currentState = 24;
+            else
+              throw InvalidTransitionFailure();
+          }
+          break;
       }
     } on InvalidTransitionFailure {
       if (finalStates.contains(currentState)) {
@@ -276,7 +305,7 @@ class DFAStore {
               token ??= Token(
                 lexema: tokenStore.lexemaLido,
                 classe: EnumTipoToken.Num.toFormattedString,
-                tipo: 'real',
+                tipo: 'inteiro',
               );
 
               break;
@@ -374,6 +403,14 @@ class DFAStore {
               token ??= Token(
                 lexema: tokenStore.lexemaLido,
                 classe: EnumTipoToken.OPR.toFormattedString,
+              );
+
+              break;
+            case 24:
+              token ??= Token(
+                lexema: tokenStore.lexemaLido,
+                classe: EnumTipoToken.Num.toFormattedString,
+                tipo: 'real',
               );
 
               break;

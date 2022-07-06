@@ -9,7 +9,7 @@ inicio
     leia B;
     escreva "Digite A:";
     leia A;
-    se(B>2)
+    se(B>23e2)
     {teste1234 124124 1}
     entao
         se(B>=4)
