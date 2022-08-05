@@ -1,9 +1,8 @@
-import 'domain/usecases/scanner/get_codigo_fonte_from_file_usecase.dart';
-import 'domain/usecases/tokens/get_tokens_from_palavras_reservadas_usecase.dart';
-import 'errors/failures/failures.dart';
-import 'stores/dfa_store.dart';
-import 'stores/scanner_store.dart';
-import 'stores/token_store.dart';
+import 'package:analisador_lexico/analisador_lexico.dart'
+    hide NoParams, handleUseCaseSync;
+
+import 'domain/usecases/get_go_to_from_csv_usecase.dart';
+import 'domain/usecases/i_usecase.dart';
 
 void main() async {
   final TokenStore tokenStore = TokenStore(
@@ -17,6 +16,11 @@ void main() async {
     tokenStore: tokenStore,
     getCodigoFonteFromFileUsecase: GetCodigoFonteFromFileUsecase(),
   );
+
+  final List<List<String>> tableGoTo = handleUseCaseSync(
+    GetGoToFromCsvUsecase(),
+  );
+  print(tableGoTo);
 
   while (!tokenStore.isOver) {
     print(

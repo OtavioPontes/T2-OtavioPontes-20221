@@ -1,14 +1,16 @@
-name: analisador_lexico
-description: Analisador Léxixo
+name: analisador_sintatico
+description: Analisador Sintático
 
-publish_to: "none"
-
+publish_to: none
 version: 1.0.0
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  csv: 5.0.1
+  analisador_lexico:
+    path: ../T1-OtavioPontes-20221
 
 dev_dependencies:
   analyzer: 4.1.0
@@ -16,4 +18,4 @@ dev_dependencies:
   dartz: 0.10.1
 
 scripts:
-  run: dart src/main.dart
+  run: dart lib/src/main.dart

@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "T1-OtavioPontes-20221",
+            "name": "T2-OtavioPontes-20221",
             "request": "launch",
             "type": "dart",
-            "program": "src/main.dart",
+            "program": "lib/src/main.dart",
         }
     ]
 }
