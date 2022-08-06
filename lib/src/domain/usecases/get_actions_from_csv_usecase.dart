@@ -8,23 +8,27 @@ import '../../errors/failures/failures.dart';
 import '../../errors/failures/i_failure.dart';
 import 'i_usecase.dart';
 
-class GetGoToFromCsvUsecase extends UseCaseSync<List<List<String>>, NoParams> {
+class GetActionsFromCsvUsecase
+    extends UseCaseSync<List<List<String>>, NoParams> {
   @override
   Either<IFailure, List<List<String>>> call(NoParams params) {
     try {
-      final String goToCsvString = File(
+      final String actionsCsvString = File(
         path.joinAll(
           [
             '..\\',
             'T2-OtavioPontes-20221',
             'assets',
-            'goto.csv',
+            'actions.csv',
           ],
         ),
       ).readAsStringSync();
-      final List<List<String>> rowsAsListOfValues = const CsvToListConverter()
-          .convert(goToCsvString,
-              shouldParseNumbers: false, fieldDelimiter: ';');
+      final List<List<String>> rowsAsListOfValues =
+          const CsvToListConverter().convert(
+        actionsCsvString,
+        shouldParseNumbers: false,
+        fieldDelimiter: ';',
+      );
       rowsAsListOfValues.removeAt(0);
       return Right(rowsAsListOfValues);
     } catch (_) {

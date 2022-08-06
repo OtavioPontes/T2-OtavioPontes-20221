@@ -1,8 +1,8 @@
 import 'package:analisador_lexico/analisador_lexico.dart'
     hide NoParams, handleUseCaseSync;
 
-import 'domain/usecases/get_go_to_from_csv_usecase.dart';
-import 'domain/usecases/i_usecase.dart';
+import 'stores/parser_store.dart';
+import 'stores/table_store.dart';
 
 void main() async {
   final TokenStore tokenStore = TokenStore(
@@ -17,19 +17,21 @@ void main() async {
     getCodigoFonteFromFileUsecase: GetCodigoFonteFromFileUsecase(),
   );
 
-  final List<List<String>> tableGoTo = handleUseCaseSync(
-    GetGoToFromCsvUsecase(),
-  );
-  print(tableGoTo);
+  final TableStore tableStore = TableStore();
+  final ParserStore parserStore = ParserStore(tableStore: tableStore);
 
-  while (!tokenStore.isOver) {
-    print(
-      await scannerStore.scanner(
-        codigoFonte: scannerStore.codigoFonte,
-        rowPar: tokenStore.row,
-        columnPar: tokenStore.column,
-      ),
+  print('Go To:\n');
+  print(tableStore.tableGoTo.map((e) => '$e\n').toList());
+  print('Actions:\n');
+  print(tableStore.tableActions.map((e) => '$e\n').toList());
+
+  while (!tokenStore.isOver && !parserStore.isOver) {
+    final Token? token = await scannerStore.scanner(
+      codigoFonte: scannerStore.codigoFonte,
+      rowPar: tokenStore.row,
+      columnPar: tokenStore.column,
     );
+    if (token != null) parserStore.parse(token: token);
   }
 
   print('\nTabela De Simbolos:');
