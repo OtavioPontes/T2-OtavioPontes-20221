@@ -7,47 +7,82 @@ import 'table_store.dart';
 
 class ParserStore {
   final TableStore tableStore;
+  final ScannerStore scannerStore;
+  final TokenStore tokenStore;
   ParserStore({
     required this.tableStore,
+    required this.scannerStore,
+    required this.tokenStore,
   });
   Stack<int> parserStack = Stack(0);
+  Stack<Token> tokenStack = Stack(Token(classe: '\$', lexema: '\$'));
+
   bool isOver = false;
 
-  void parse({required Token token}) {
-    try {
-      final int indexColumn = tableStore.tableActions[0].indexWhere(
-          (element) => element.toUpperCase() == token.classe.toUpperCase());
-      final String actionString =
-          tableStore.tableActions[parserStack.peek + 1][indexColumn];
-      final Action action = UtilsEnumActions.fromString(actionString);
+  Token? get nextToken => scannerStore.scanner(
+        codigoFonte: scannerStore.codigoFonte,
+        rowPar: tokenStore.row,
+        columnPar: tokenStore.column,
+      );
 
-      if (action.type.isShift) {
-        parserStack.push(action.state!);
-      }
-      if (action.type.isReduce) {
-        final int rightLegth =
-            tableStore.grammar[action.state!].rightSide.split(' ').length;
+  void setNextToken() {
+    tokenStack.push(nextToken!);
+    if (tokenStack.peek.classe == 'EOF') tokenStack.pop();
+  }
 
-        for (int i = 0; i < rightLegth; i++) {
-          parserStack.pop();
+  void parse() {
+    setNextToken();
+    while (!isOver) {
+      try {
+        final int indexColumn = tableStore.tableActions[0].indexWhere(
+            (element) =>
+                element.toUpperCase() == tokenStack.peek.classe.toUpperCase());
+        final String actionString =
+            tableStore.tableActions[parserStack.peek + 1][indexColumn];
+        final Action action = UtilsEnumActions.fromString(actionString);
+
+        if (action.type.isShift) {
+          parserStack.push(action.state!);
+          tokenStack.pop();
+          setNextToken();
         }
-        final int indexColumnGoTo = tableStore.tableGoTo[0].indexWhere(
-          (element) =>
-              element.toUpperCase() ==
-              tableStore.grammar[action.state!].leftSide.toUpperCase(),
-        );
-        parserStack.push(
-          int.parse(
-            tableStore.tableGoTo[parserStack.peek + 1][indexColumnGoTo],
-          ),
-        );
-        print(tableStore.grammar[action.state!]);
+        if (action.type.isReduce) {
+          final int rightLegth = tableStore.grammar
+              .elementAt(action.state!)
+              .rightSide
+              .split(' ')
+              .length;
+
+          for (int i = 0; i < rightLegth; i++) {
+            parserStack.pop();
+          }
+          final int indexColumnGoTo = tableStore.tableGoTo[0].indexWhere(
+            (element) =>
+                element.toUpperCase() ==
+                tableStore.grammar
+                    .elementAt(action.state!)
+                    .leftSide
+                    .toUpperCase(),
+          );
+          try {
+            final String stateString =
+                tableStore.tableGoTo[parserStack.peek + 1][indexColumnGoTo];
+            parserStack.push(
+              int.parse(
+                stateString,
+              ),
+            );
+            print(tableStore.grammar.elementAt(action.state!));
+          } catch (e) {
+            print(e);
+          }
+        }
+        if (action.type.isAccept) {
+          isOver = true;
+        }
+      } catch (e) {
+        print(e);
       }
-      if (action.type.isAccept) {
-        isOver = true;
-      }
-    } catch (e) {
-      print(e);
     }
   }
 }

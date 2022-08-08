@@ -18,21 +18,13 @@ void main() async {
   );
 
   final TableStore tableStore = TableStore();
-  final ParserStore parserStore = ParserStore(tableStore: tableStore);
+  final ParserStore parserStore = ParserStore(
+    tokenStore: tokenStore,
+    tableStore: tableStore,
+    scannerStore: scannerStore,
+  );
 
-  print('Go To:\n');
-  print(tableStore.tableGoTo.map((e) => '$e\n').toList());
-  print('Actions:\n');
-  print(tableStore.tableActions.map((e) => '$e\n').toList());
-
-  while (!tokenStore.isOver && !parserStore.isOver) {
-    final Token? token = await scannerStore.scanner(
-      codigoFonte: scannerStore.codigoFonte,
-      rowPar: tokenStore.row,
-      columnPar: tokenStore.column,
-    );
-    if (token != null) parserStore.parse(token: token);
-  }
+  parserStore.parse();
 
   print('\nTabela De Simbolos:');
   tokenStore.tabelaSimbolos.forEach(
