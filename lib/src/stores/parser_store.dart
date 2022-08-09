@@ -29,6 +29,8 @@ class ParserStore {
 
   void setNextToken() {
     currentToken = nextToken;
+    if (currentToken?.classe == 'EOF')
+      currentToken = currentToken?.copyWith(classe: '\$');
   }
 
   void parse() {
