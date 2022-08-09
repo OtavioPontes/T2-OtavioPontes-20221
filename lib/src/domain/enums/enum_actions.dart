@@ -34,6 +34,6 @@ class UtilsEnumActions {
         type: EnumActions.accept,
       );
     }
-    throw InternalFailure();
+    throw ActionEmptyFailure();
   }
 }

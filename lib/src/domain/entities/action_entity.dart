@@ -10,5 +10,5 @@ class Action {
   });
 
   @override
-  String toString() => 'Action(action: $type, state: $state)';
+  String toString() => 'Action($type, $state)';
 }

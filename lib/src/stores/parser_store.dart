@@ -3,6 +3,7 @@ import 'package:analisador_lexico/analisador_lexico.dart';
 import '../domain/entities/action_entity.dart';
 import '../domain/entities/stack.dart';
 import '../domain/enums/enum_actions.dart';
+import '../errors/failures/failures.dart';
 import 'table_store.dart';
 
 class ParserStore {
@@ -15,7 +16,8 @@ class ParserStore {
     required this.tokenStore,
   });
   Stack<int> parserStack = Stack(0);
-  Stack<Token> tokenStack = Stack(Token(classe: '\$', lexema: '\$'));
+
+  Token? currentToken;
 
   bool isOver = false;
 
@@ -26,8 +28,7 @@ class ParserStore {
       );
 
   void setNextToken() {
-    tokenStack.push(nextToken!);
-    if (tokenStack.peek.classe == 'EOF') tokenStack.pop();
+    currentToken = nextToken;
   }
 
   void parse() {
@@ -36,22 +37,19 @@ class ParserStore {
       try {
         final int indexColumn = tableStore.tableActions[0].indexWhere(
             (element) =>
-                element.toUpperCase() == tokenStack.peek.classe.toUpperCase());
+                element.toUpperCase() == currentToken?.classe.toUpperCase());
         final String actionString =
             tableStore.tableActions[parserStack.peek + 1][indexColumn];
+
         final Action action = UtilsEnumActions.fromString(actionString);
 
         if (action.type.isShift) {
           parserStack.push(action.state!);
-          tokenStack.pop();
           setNextToken();
         }
         if (action.type.isReduce) {
-          final int rightLegth = tableStore.grammar
-              .elementAt(action.state!)
-              .rightSide
-              .split(' ')
-              .length;
+          final int rightLegth =
+              tableStore.grammar[action.state!].rightSide.split(' ').length;
 
           for (int i = 0; i < rightLegth; i++) {
             parserStack.pop();
@@ -59,10 +57,7 @@ class ParserStore {
           final int indexColumnGoTo = tableStore.tableGoTo[0].indexWhere(
             (element) =>
                 element.toUpperCase() ==
-                tableStore.grammar
-                    .elementAt(action.state!)
-                    .leftSide
-                    .toUpperCase(),
+                tableStore.grammar[action.state!].leftSide.toUpperCase(),
           );
           try {
             final String stateString =
@@ -72,11 +67,12 @@ class ParserStore {
                 stateString,
               ),
             );
-            print(tableStore.grammar.elementAt(action.state!));
+            print('${tableStore.grammar[action.state!]}');
           } catch (e) {
-            print(e);
+            throw GoToEmptyFailure();
           }
         }
+
         if (action.type.isAccept) {
           isOver = true;
         }

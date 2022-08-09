@@ -8,5 +8,5 @@ class GrammarRule {
   });
 
   @override
-  String toString() => 'GrammarRule($leftSide -> $rightSide)';
+  String toString() => '$leftSide -> $rightSide';
 }
