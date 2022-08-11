@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:csv/csv.dart';
 import 'package:dartz/dartz.dart';
 import 'package:path/path.dart' as path;
 

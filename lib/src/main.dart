@@ -26,12 +26,7 @@ void main() async {
 
   parserStore.parse();
 
-  print('\nTabela De Simbolos:');
-  tokenStore.tabelaSimbolos.forEach(
-    (key, value) => print(value),
-  );
-
-  print('\nErros:');
+  if (tokenStore.hasError) print('\nErros:');
   tokenStore.erros.forEach(
     (element) => {
       if (element is InvalidCharFailure)

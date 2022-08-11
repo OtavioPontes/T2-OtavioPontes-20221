@@ -14,7 +14,12 @@ extension ExtensionEnumTipoToken on EnumActions {
 }
 
 class UtilsEnumActions {
-  static Action fromString(String action) {
+  static Action fromString({
+    required String action,
+    required String char,
+    required int row,
+    required int column,
+  }) {
     if (action.startsWith('s')) {
       final List<String> actionSteps = action.split('s');
       return Action(
@@ -34,6 +39,10 @@ class UtilsEnumActions {
         type: EnumActions.accept,
       );
     }
-    throw ActionEmptyFailure();
+    throw ActionEmptyFailure(
+      char: char,
+      column: column,
+      row: row,
+    );
   }
 }
